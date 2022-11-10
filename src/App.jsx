@@ -1,40 +1,81 @@
 
-// Aqui você irá escrever as suas funções de Validação, para verificar se o Formulário foi preenchido corretamente
-import { InputNome } from 'components/nome'
-import { InputCor } from 'components/cor'
-import { useState } from 'react'
+import { classNames } from 'classnames';
+import { useState } from "react";
+import { Cards } from "./Card";
+import styles from './components/Erros/styles.module.css';
+
 function App() {
+  const [nomeCor, setNomeCor] = useState("");
+  const [cor, setCor] = useState("");
+  const [allCores, setAllCores] = useState([]);
+  const [erro, setErro] = useState(false);
 
-  const[nome, setNome] = useState('')
-  const[cor, setCor] = useState('')
-
-  const handleClick = () => {
-
-
+  const containsNumber = (numero) => { //Validação dos números(será chamada na função ValidarForms)
+    return /[0-9]/.test(numero);
   }
-  
 
-// Aqui você irá criar os Estados para manipular os Inputs
+  function validarForms() { //Validação nome da cor e cor()
+    if (nomeCor === null || nomeCor === undefined) return true;
+    var nomeSemEspaco = nomeCor.trim();
+    if (nomeSemEspaco.length < 3) return true;
+    if (cor.length < 6 && !containsNumber(cor)) return true;
+    return false;
+  }
+
+  function adicionarCor(event) { //Adicionar uma cor
+    event.preventDefault()
+    let validacao = validarForms();
+    const coloracao = {
+      nomeCor: nomeCor,
+      cor: cor
+    }
+
+    setErro(validacao)
+
+    if (validacao) return;
+
+    setAllCores([...allCores, coloracao])
+  }
+
   return (
-    <div className="App">
-     <form onSubmit={handleSubmit}>
-     <h1>Adicione Nova Cor</h1>
-      <InputNome nome={nome} setNome={setNome}/>
-      <InputCor cor={cor} setCor={setCor}/>
-      <button type="submit" onClick={handleClick}>Adicionar</button>
-      {/* Comece a desenvolver o seu Código por aqui :) */}
-     </form>
-    </div>
+    <main>
+      <div className="App">
+        <h1>Carga de estudiantes</h1>
+        <form className="formCadastro" onSubmit={event => adicionarCor(event)}>
+          <input type="text"
+            className="form-control"
+            value={nomeCor}
+            onChange={event => setNomeCor(event.target.value)}
+            placeholder="Entre com o nome da Cor" />
+
+          <input type="color"
+            className="form-control"
+            value={cor}
+            onChange={event => setCor(event.target.value)}
+            placeholder="Escolha a cor" />
+          <button type="submit" className="btn btn-primary">Adicionar</button>
+        </form>
+        <small className={classNames({
+          [styles.erro]: erro
+        })}>
+          Por favor, verifique os dados inseridos no formulário
+        </small>
+      </div>
+      
+      <section className='Cards'>
+        {
+          allCores.map(
+            cores => {
+              return (
+                <Cards id={cores} cores={allCores}
+                />
+              )
+            }
+          )
+        }
+      </section>
+    </main>
   )
 }
-
-<div className="App">
-<form onSubmit={handleSubmit}>
- <h1>ADICIONAR NOVA COR</h1>
- <InputNome name={nome} setName={setNome} />
- <InputCor color={cor} setColor={setCor} />
- <button type="submit" onClick={handleClick}>Adicionar</button>
-</form>
-</div>
 
 export default App
