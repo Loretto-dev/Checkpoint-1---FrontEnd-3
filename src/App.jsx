@@ -1,81 +1,76 @@
-
-import { classNames } from 'classnames';
+import classNames from 'classnames';
 import { useState } from "react";
-import { Cards } from "./Card";
-import styles from './components/Erros/styles.module.css';
+import { Cards } from "./components/CardCor/Cor";
+import styles from "./app.module.css";
 
 function App() {
   const [nomeCor, setNomeCor] = useState("");
-  const [cor, setCor] = useState("");
-  const [allCores, setAllCores] = useState([]);
-  const [erro, setErro] = useState(false);
+  const [hexadecimalColor, setHexadecimalColor] = useState("");
+  const [allColors, setAllColors] = useState([]);
+  const [error, setError] = useState(false);
 
-  const containsNumber = (numero) => { //Validação dos números(será chamada na função ValidarForms)
-    return /[0-9]/.test(numero);
+  const containsNumber = (number) => { 
+    return /[0-9]/.test(number);
   }
 
-  function validarForms() { //Validação nome da cor e cor()
-    if (nomeCor === null || nomeCor === undefined) return true;
-    var nomeSemEspaco = nomeCor.trim();
-    if (nomeSemEspaco.length < 3) return true;
-    if (cor.length < 6 && !containsNumber(cor)) return true;
+  function validateForm(){
+    if(nomeCor === null || nomeCor === undefined) return true;
+
+    var nameWithoutSpace = nomeCor.trim();
+
+    if(nameWithoutSpace.length < 3) return true;
+
+    if (hexadecimalColor.length < 6 && !containsNumber(hexadecimalColor))return true;
+
     return false;
   }
 
-  function adicionarCor(event) { //Adicionar uma cor
+  function addColor(event) {
     event.preventDefault()
-    let validacao = validarForms();
-    const coloracao = {
+    let validation = validateForm();
+    const coloring = {
       nomeCor: nomeCor,
-      cor: cor
+      hexadecimalColor: hexadecimalColor
     }
+    
+    setError(validation)
 
-    setErro(validacao)
+    if (validation) return;
 
-    if (validacao) return;
-
-    setAllCores([...allCores, coloracao])
+    setAllColors([...allColors, coloring])
   }
 
   return (
-    <main>
-      <div className="App">
-        <h1>Carga de estudiantes</h1>
-        <form className="formCadastro" onSubmit={event => adicionarCor(event)}>
-          <input type="text"
-            className="form-control"
-            value={nomeCor}
-            onChange={event => setNomeCor(event.target.value)}
-            placeholder="Entre com o nome da Cor" />
+    <div className="App">
+     <h1>ADICIONAR NOVA COR</h1>
+     <form className="formCadastro"  onSubmit={event => addColor(event)}>
 
-          <input type="color"
-            className="form-control"
-            value={cor}
-            onChange={event => setCor(event.target.value)}
-            placeholder="Escolha a cor" />
-          <button type="submit" className="btn btn-primary">Adicionar</button>
+            <input type="text" 
+      className="form-control" 
+      value={nomeCor} 
+      onChange={event => setNomeCor(event.target.value)} 
+      placeholder="Digite aqui o nome da cor"/>
+
+            <input type="color" 
+      className="form-control" 
+      value={hexadecimalColor} 
+      onChange={event => setHexadecimalColor(event.target.value)} 
+      placeholder="Escolha a sua cor em formato hexadecimal"/>
+
+            <button type="submit" className="btn btn-primary">ADICIONAR</button>
         </form>
-        <small className={classNames({
-          [styles.erro]: erro
-        })}>
-          Por favor, verifique os dados inseridos no formulário
-        </small>
-      </div>
-      
-      <section className='Cards'>
-        {
-          allCores.map(
-            cores => {
-              return (
-                <Cards id={cores} cores={allCores}
-                />
-              )
-            }
-          )
-        }
-      </section>
-    </main>
+    <small 
+      className={classNames({
+          [styles.error]: error
+      })}
+    >
+      Por favor, verifique os dados inseridos no formulário
+    </small>
+
+     <Cards cores = {allColors}/>
+
+    </div>
   )
-}
+  }
 
 export default App
