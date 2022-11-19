@@ -12,13 +12,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-.erro {
-  position: absolute;
-  display: block;
-  color: #ff0000;
-}
-
-small {
-  display: none;
-}
